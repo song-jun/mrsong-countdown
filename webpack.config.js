@@ -1,12 +1,26 @@
 var path = require('path')
 var webpack = require('webpack')
 
+// 执行环境
+const NODE_ENV = process.env.NODE_ENV;
+console.log("-----NODE_ENV===",NODE_ENV);
+
 module.exports = {
-  entry: './src/main.js',
+  // entry: './src/main.js',
+  // output: {
+  //   path: path.resolve(__dirname, './dist'),
+  //   publicPath: '/dist/',
+  //   filename: 'build.js'
+  // },
+  // 根据不同的执行环境配置不同的入口
+  entry: NODE_ENV == 'development' ? './src/main.js' : './src/myPlugin/mrsongCountdown/index.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: NODE_ENV == 'development' ? 'build.js' :'mrsongCountdown.js',
+    library: 'mrsongCountdown', // 指定的就是你使用require时的模块名
+    libraryTarget: 'umd', // 指定输出格式
+    umdNamedDefine: true // 会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define
   },
   module: {
     rules: [
@@ -16,41 +30,11 @@ module.exports = {
           'vue-style-loader',
           'css-loader'
         ],
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-        ],
-      },
-      {
-        test: /\.sass$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader?indentedSyntax'
-        ],
-      },
-      {
+      },      {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
           loaders: {
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
-            'scss': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader'
-            ],
-            'sass': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader?indentedSyntax'
-            ]
           }
           // other vue-loader options go here
         }
